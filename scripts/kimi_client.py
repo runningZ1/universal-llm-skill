@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
 Kimi (Moonshot AI) 客户端
-支持所有 Kimi 模型系列：moonshot-v1-8k, moonshot-v1-32k, moonshot-v1-128k, kimi-k2
+支持所有 Kimi 模型系列：
+- moonshot-v1-8k, moonshot-v1-32k, moonshot-v1-128k: 通用对话模型
+- kimi-k2-thinking: 深度推理模型，支持思维链输出
+- kimi-k2-instruct: 快速响应模型，适合工具调用和代理任务
 """
 
 import os
@@ -84,17 +87,25 @@ def call_kimi(
 
         result = response.json()
 
-        return {
+        # 提取响应内容
+        message = result["choices"][0]["message"]
+        response_data = {
             "success": True,
             "provider": "kimi",
             "model": model,
-            "response": result["choices"][0]["message"]["content"],
+            "response": message["content"],
             "usage": {
                 "prompt_tokens": result.get("usage", {}).get("prompt_tokens"),
                 "completion_tokens": result.get("usage", {}).get("completion_tokens"),
                 "total_tokens": result.get("usage", {}).get("total_tokens")
             }
         }
+
+        # K2-Thinking 模型会返回 reasoning_content（思维链）
+        if "reasoning_content" in message and message["reasoning_content"]:
+            response_data["reasoning_content"] = message["reasoning_content"]
+
+        return response_data
 
     except requests.exceptions.RequestException as e:
         return {
@@ -123,12 +134,13 @@ def main():
   moonshot-v1-8k      8K 上下文，适合通用任务
   moonshot-v1-32k     32K 上下文，适合中等长度文档
   moonshot-v1-128k    128K 上下文，适合长文档分析
-  kimi-k2             万亿参数 MoE 模型，最强性能
+  kimi-k2-thinking    256K 上下文，深度推理，支持思维链（推荐温度 1.0）
+  kimi-k2-instruct    128K 上下文，快速响应，工具调用（推荐温度 0.6）
 
 示例：
   %(prog)s --prompt "你好，请介绍一下自己"
   %(prog)s --model moonshot-v1-128k --prompt "分析这篇长文档..."
-  %(prog)s --model kimi-k2 --prompt "复杂推理任务" --temperature 0.3
+  %(prog)s --model kimi-k2-thinking --prompt "复杂推理任务" --temperature 1.0
         """
     )
 

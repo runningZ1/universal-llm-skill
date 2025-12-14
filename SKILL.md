@@ -35,10 +35,11 @@ allowed-tools: Bash, Read
 
 | 模型 | 上下文长度 | 适用场景 |
 |------|-----------|---------|
-| moonshot-v1-8k | 8K | 通用对话、简短任务 |
-| moonshot-v1-32k | 32K | 中等长度文档分析 |
-| moonshot-v1-128k | 128K | 长文档、整本书分析 |
-| kimi-k2 | 128K | 复杂推理、专业任务（万亿参数 MoE） |
+| moonshot-v1-8k | 8K | 通用对话、简短任务（推荐温度 0.7） |
+| moonshot-v1-32k | 32K | 中等长度文档分析（推荐温度 0.7） |
+| moonshot-v1-128k | 128K | 长文档、整本书分析（推荐温度 0.7） |
+| kimi-k2-thinking | 256K | 深度推理、数学竞赛、代理搜索（推荐温度 1.0，支持思维链） |
+| kimi-k2-instruct | 128K | 快速响应、工具调用、代码生成（推荐温度 0.6） |
 
 ## 环境设置
 
@@ -111,7 +112,7 @@ python scripts/kimi_client.py \
 
 ### 响应格式
 
-**成功响应：**
+**成功响应（通用模型）：**
 ```json
 {
   "success": true,
@@ -125,6 +126,24 @@ python scripts/kimi_client.py \
   }
 }
 ```
+
+**成功响应（K2-Thinking 模型，包含思维链）：**
+```json
+{
+  "success": true,
+  "provider": "kimi",
+  "model": "kimi-k2-thinking",
+  "response": "最终答案...",
+  "reasoning_content": "详细的思维推理过程，展示模型如何一步步得出答案...",
+  "usage": {
+    "prompt_tokens": 50,
+    "completion_tokens": 100,
+    "total_tokens": 150
+  }
+}
+```
+
+**注意：** K2-Thinking 模型会在响应中额外返回 `reasoning_content` 字段，这是模型的思维链输出，展示了它的推理过程。
 
 **错误响应：**
 ```json
@@ -149,14 +168,24 @@ python scripts/kimi_client.py \
   --temperature 0.3
 ```
 
-**示例 3：使用最强模型**
+**示例 3：深度推理任务（K2-Thinking）**
 ```bash
 python scripts/kimi_client.py \
-  --model kimi-k2 \
-  --prompt "请解释量子纠缠的本质，并给出数学推导"
+  --model kimi-k2-thinking \
+  --prompt "请解释量子纠缠的本质，并给出数学推导" \
+  --temperature 1.0
+```
+*注：响应中会包含 reasoning_content 字段，展示详细的思维推理过程*
+
+**示例 4：快速工具调用（K2-Instruct）**
+```bash
+python scripts/kimi_client.py \
+  --model kimi-k2-instruct \
+  --prompt "写一个 Python 函数来计算斐波那契数列" \
+  --temperature 0.6
 ```
 
-**示例 4：创意写作**
+**示例 5：创意写作**
 ```bash
 python scripts/kimi_client.py \
   --model moonshot-v1-8k \
@@ -183,6 +212,9 @@ response=$(python scripts/kimi_client.py --prompt "你好")
 # 提取响应文本
 echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['response'])"
 
+# 提取思维链（仅 K2-Thinking 模型）
+echo "$response" | python -c "import sys, json; data=json.load(sys.stdin); print(data.get('reasoning_content', '无思维链'))"
+
 # 提取 token 使用情况
 echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['usage'])"
 ```
@@ -205,14 +237,20 @@ echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['usag
 - **moonshot-v1-8k**: 日常对话、简短内容生成、快速响应场景
 - **moonshot-v1-32k**: 中等长度文档分析、代码审查、技术文档
 - **moonshot-v1-128k**: 长论文、整本书分析、大型代码库理解
-- **kimi-k2**: 复杂推理、学术研究、专业领域任务
+- **kimi-k2-thinking**: 复杂推理、数学竞赛、深度代码分析、代理搜索任务（支持思维链）
+- **kimi-k2-instruct**: 快速问答、工具调用、代码生成、自主问题解决
 
 ### Temperature 设置建议
 
+#### 通用模型（moonshot-v1 系列）
 - **0.0-0.3**: 翻译、总结、事实查询、数据分析
 - **0.7**: 通用对话、问答、内容改写（默认值）
 - **1.0-1.5**: 创意写作、头脑风暴、故事创作
 - **1.5-2.0**: 极高创造性任务（可能降低连贯性）
+
+#### K2 系列模型
+- **kimi-k2-thinking**: 推荐 1.0（深度推理、数学问题、复杂编程任务）
+- **kimi-k2-instruct**: 推荐 0.6（精确响应、工具调用、快速任务）
 
 ### Token 管理
 
