@@ -66,9 +66,19 @@ cp config/.env.example config/.env
 
 编辑 `config/.env`：
 ```bash
+# API 密钥（必需）
 KIMI_API_KEY=your-kimi-api-key-here
+
+# API 请求地址（可选，默认使用官方地址）
+KIMI_API_URL=https://api.moonshot.cn/v1/chat/completions
+
+# 默认模型
 DEFAULT_MODEL=moonshot-v1-8k
+
+# 默认温度
 DEFAULT_TEMPERATURE=0.7
+
+# 最大 token 数
 MAX_TOKENS=4096
 ```
 

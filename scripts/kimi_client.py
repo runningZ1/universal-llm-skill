@@ -56,7 +56,8 @@ def call_kimi(
     prompt: str,
     api_key: str,
     temperature: float = 0.7,
-    max_tokens: int = 4096
+    max_tokens: int = 4096,
+    api_url: str = "https://api.moonshot.cn/v1/chat/completions"
 ) -> Dict[str, Any]:
     """调用 Kimi API"""
     try:
@@ -68,7 +69,7 @@ def call_kimi(
         }
 
     try:
-        url = "https://api.moonshot.cn/v1/chat/completions"
+        url = api_url
 
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -201,13 +202,17 @@ def main():
     else:
         max_tokens = int(config.get("MAX_TOKENS", "4096"))
 
+    # 获取 API URL（优先级：环境变量 > 配置文件 > 默认值）
+    api_url = os.getenv("KIMI_API_URL") or config.get("KIMI_API_URL", "https://api.moonshot.cn/v1/chat/completions")
+
     # 调用 API
     result = call_kimi(
         model=model,
         prompt=args.prompt,
         api_key=api_key,
         temperature=temperature,
-        max_tokens=max_tokens
+        max_tokens=max_tokens,
+        api_url=api_url
     )
 
     # 输出 JSON 响应
