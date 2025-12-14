@@ -1,17 +1,17 @@
 # Universal LLM Skill
 
-A Claude Code skill that provides unified access to multiple LLM providers (OpenAI, Anthropic, Google Gemini, and Kimi/Moonshot) through a single, consistent Python interface.
+一个为 Claude Code 设计的技能，通过单一、一致的 Python 接口提供对多个 LLM 提供商（OpenAI、Anthropic、Google Gemini 和 Kimi/月之暗面）的统一访问。
 
-## 🌟 Features
+## 🌟 特性
 
-- **Multi-Provider Support**: Call OpenAI GPT, Anthropic Claude, Google Gemini, and Kimi (Moonshot) models from one unified interface
-- **Consistent API**: Same command structure across all providers
-- **JSON Response Format**: Standardized output for easy parsing
-- **Token Usage Tracking**: Monitor token consumption for all providers
-- **Comprehensive Error Handling**: Clear error messages and status codes
-- **Chinese Language Optimization**: Kimi models excel at Chinese language tasks
+- **多提供商支持**：通过统一接口调用 OpenAI GPT、Anthropic Claude、Google Gemini 和 Kimi（月之暗面）模型
+- **一致的 API**：所有提供商使用相同的命令结构
+- **JSON 响应格式**：标准化输出，便于解析
+- **Token 使用追踪**：监控所有提供商的 token 消耗
+- **完善的错误处理**：清晰的错误消息和状态码
+- **中文语言优化**：Kimi 模型在中文任务上表现卓越
 
-## 🚀 Supported Providers & Models
+## 🚀 支持的提供商和模型
 
 ### OpenAI
 - gpt-4o (GPT-4 Omni)
@@ -30,22 +30,22 @@ A Claude Code skill that provides unified access to multiple LLM providers (Open
 - gemini-pro
 
 ### Kimi (Moonshot AI / 月之暗面)
-- moonshot-v1-8k (8K context)
-- moonshot-v1-32k (32K context)
-- moonshot-v1-128k (128K context)
-- kimi-k2 (Trillion-parameter MoE)
+- moonshot-v1-8k (8K 上下文)
+- moonshot-v1-32k (32K 上下文)
+- moonshot-v1-128k (128K 上下文)
+- kimi-k2 (万亿参数 MoE 模型)
 
-## 📦 Installation
+## 📦 安装
 
-1. **Install Dependencies**
+1. **安装依赖**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. **Configure API Keys**
+2. **配置 API 密钥**
 
-Set environment variables for the providers you want to use:
+为你想使用的提供商设置环境变量：
 
 ```bash
 export OPENAI_API_KEY='your-openai-key'
@@ -54,9 +54,9 @@ export GOOGLE_API_KEY='your-google-key'
 export KIMI_API_KEY='your-kimi-key'
 ```
 
-## 💡 Usage
+## 💡 使用方法
 
-### Basic Usage
+### 基本用法
 
 ```bash
 python scripts/model_gateway.py \
@@ -65,13 +65,13 @@ python scripts/model_gateway.py \
   --prompt "[YOUR_PROMPT]"
 ```
 
-**Parameters:**
-- `--provider`: Choose from `openai`, `anthropic`, `google`, or `kimi`
-- `--model`: Specific model name
-- `--prompt`: Your prompt text
-- `--temperature`: (Optional) Controls randomness, default 0.7
+**参数说明:**
+- `--provider`: 选择 `openai`、`anthropic`、`google` 或 `kimi`
+- `--model`: 具体的模型名称
+- `--prompt`: 你的提示词文本
+- `--temperature`: (可选) 控制随机性，默认 0.7
 
-### Examples
+### 使用示例
 
 **OpenAI GPT-4:**
 ```bash
@@ -98,7 +98,7 @@ python scripts/model_gateway.py \
   --temperature 1.2
 ```
 
-**Kimi (Chinese):**
+**Kimi (中文):**
 ```bash
 python scripts/model_gateway.py \
   --provider "kimi" \
@@ -106,7 +106,7 @@ python scripts/model_gateway.py \
   --prompt "请用中文解释量子计算的基本原理"
 ```
 
-**Kimi Long Context:**
+**Kimi 长上下文:**
 ```bash
 python scripts/model_gateway.py \
   --provider "kimi" \
@@ -115,9 +115,9 @@ python scripts/model_gateway.py \
   --temperature 0.3
 ```
 
-## 📄 Response Format
+## 📄 响应格式
 
-**Success Response:**
+**成功响应:**
 ```json
 {
   "success": true,
@@ -132,7 +132,7 @@ python scripts/model_gateway.py \
 }
 ```
 
-**Error Response:**
+**错误响应:**
 ```json
 {
   "success": false,
@@ -140,76 +140,76 @@ python scripts/model_gateway.py \
 }
 ```
 
-## 🎯 Use Cases
+## 🎯 使用场景
 
-- **Model Comparison**: Test the same prompt across different providers
-- **Multi-Provider Applications**: Build apps that leverage the best model for each task
-- **Cost Optimization**: Switch between models based on budget and requirements
-- **Chinese Content**: Use Kimi for superior Chinese language understanding
-- **Long Context Tasks**: Leverage Kimi's 128K context window for document analysis
+- **模型对比**：在不同提供商之间测试相同的提示词
+- **多提供商应用**：构建利用每个任务最佳模型的应用
+- **成本优化**：根据预算和需求在模型之间切换
+- **中文内容**：使用 Kimi 获得卓越的中文语言理解能力
+- **长上下文任务**：利用 Kimi 的 128K 上下文窗口进行文档分析
 
-## 🔑 Getting API Keys
+## 🔑 获取 API 密钥
 
 ### OpenAI
-Visit: https://platform.openai.com/api-keys
+访问: https://platform.openai.com/api-keys
 
 ### Anthropic
-Visit: https://console.anthropic.com/
+访问: https://console.anthropic.com/
 
 ### Google Gemini
-Visit: https://makersuite.google.com/app/apikey
+访问: https://makersuite.google.com/app/apikey
 
-### Kimi (Moonshot AI)
-1. Visit: https://platform.moonshot.cn/console/account
-2. Sign in with WeChat
-3. Create API Key
-4. New users get ¥10 + 500K tokens free!
+### Kimi (月之暗面)
+1. 访问: https://platform.moonshot.cn/console/account
+2. 使用微信扫码登录
+3. 创建 API Key
+4. 新用户获赠 ¥10 + 50万 tokens！
 
-## 📚 Best Practices
+## 📚 最佳实践
 
-**Model Selection:**
-- GPT-4o: General tasks, high-quality reasoning
-- Claude 3.5 Sonnet: Coding, analysis, long contexts
-- Gemini 1.5 Pro: Multimodal tasks, cost efficiency
-- Kimi: Chinese language, ultra-long contexts (128K)
+**模型选择:**
+- GPT-4o: 通用任务，高质量推理
+- Claude 3.5 Sonnet: 编程、分析、长上下文
+- Gemini 1.5 Pro: 多模态任务，成本效益
+- Kimi: 中文语言，超长上下文 (128K)
 
-**Temperature Settings:**
-- 0.0-0.3: Factual, deterministic
-- 0.7: Balanced (default)
-- 1.0-2.0: Creative, diverse
+**Temperature 设置:**
+- 0.0-0.3: 事实性、确定性
+- 0.7: 平衡（默认）
+- 1.0-2.0: 创造性、多样性
 
-## 🛠️ Development
+## 🛠️ 开发
 
-### File Structure
+### 文件结构
 ```
 universal-llm-skill/
-├── SKILL.md                 # Claude skill documentation
-├── requirements.txt         # Python dependencies
+├── SKILL.md                 # Claude skill 文档
+├── requirements.txt         # Python 依赖
 ├── scripts/
-│   └── model_gateway.py    # Main gateway script
-└── README.md               # This file
+│   └── model_gateway.py    # 主网关脚本
+└── README.md               # 本文件
 ```
 
-### Contributing
+### 贡献
 
-Contributions are welcome! Please feel free to submit issues or pull requests.
+欢迎贡献！请随时提交 issue 或 pull request。
 
-## 📝 License
+## 📝 许可证
 
-MIT License - Feel free to use this skill in your projects!
+MIT License - 欢迎在你的项目中使用此技能！
 
-## 🙏 Acknowledgments
+## 🙏 致谢
 
-- Built for use with [Claude Code](https://claude.com/claude-code)
-- Powered by OpenAI, Anthropic, Google, and Moonshot AI APIs
+- 为 [Claude Code](https://claude.com/claude-code) 构建
+- 由 OpenAI、Anthropic、Google 和 Moonshot AI APIs 驱动
 
-## 📮 Support
+## 📮 支持
 
-If you encounter any issues or have questions:
-1. Check the [SKILL.md](SKILL.md) documentation
-2. Open an issue on GitHub
-3. Review the error messages - they're designed to be helpful!
+如果遇到任何问题或有疑问：
+1. 查看 [SKILL.md](SKILL.md) 文档
+2. 在 GitHub 上提交 issue
+3. 查看错误消息 - 它们旨在提供帮助！
 
 ---
 
-**Made with ❤️ for the Claude Code community**
+**用 ❤️ 为 Claude Code 社区打造**

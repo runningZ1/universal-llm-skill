@@ -1,100 +1,100 @@
 ---
 name: universal-llm-skill
-description: This skill should be used when Claude needs to call external LLM APIs (OpenAI GPT models, Anthropic Claude models, Google Gemini models, or Kimi/Moonshot models) to generate responses, compare outputs, or leverage specific model capabilities. Use this skill when the user explicitly requests using a different LLM provider, wants to compare model outputs, or needs specific model features not available in the current context.
+description: 当 Claude 需要调用外部 LLM API（OpenAI GPT 模型、Anthropic Claude 模型、Google Gemini 模型或 Kimi/月之暗面模型）来生成响应、比较输出或利用特定模型能力时应使用此技能。当用户明确请求使用不���的 LLM 提供商、想要比较模型输出或需要当前上下文中不可用的特定模型功能时使用此技能。
 allowed-tools: Bash, Read
 ---
 
 # Universal LLM Skill
 
-## Overview
+## 概述
 
-This skill provides a unified Python-based gateway to call multiple LLM providers through a single, consistent interface. The skill enables seamless switching between OpenAI (GPT series), Anthropic (Claude series), Google (Gemini series), and Kimi (Moonshot series) models without needing to manage different API formats or authentication methods.
+此技能提供了一个基于 Python 的统一网关，通过单一、一致的接口调用多个 LLM 提供商。该技能可以在 OpenAI（GPT 系列）、Anthropic（Claude 系列）、Google（Gemini 系列）和 Kimi（月之暗面系列）模型之间无缝切换，无需管理不同的 API 格式或认证方法。
 
-**Key Benefits:**
-- Unified API interface across four major LLM providers
-- Consistent JSON response format for easy parsing
-- Automatic error handling and informative error messages
-- Token usage tracking for all supported providers
+**主要优势：**
+- 跨四大主流 LLM 提供商的统一 API 接口
+- 一致的 JSON 响应格式，便于解析
+- 自动错误处理和信息丰富的错误消息
+- 所有支持的提供商的 Token 使用追踪
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
-- The user explicitly requests using a specific LLM provider (e.g., "Use GPT-4 to analyze this", "Ask Claude Opus about this", "Compare this with Gemini's response", "Use Kimi to process this")
-- Comparing outputs from different models for the same prompt
-- Leveraging specific capabilities of a particular model (e.g., GPT-4 for code, Gemini for multimodal tasks, Kimi for long-context Chinese content)
-- Testing prompts across different providers
-- Needing to use a different model than the current Claude instance
+在以下情况下使用此技能：
+- 用户明确请求使用特定的 LLM 提供商（例如，"使用 GPT-4 分析这个"、"询问 Claude Opus 关于这个"、"将这个与 Gemini 的响应进行比较"、"使用 Kimi 处理这个"）
+- 比较不同模型对相同提示的输出
+- 利用特定模型的特定能力（例如，GPT-4 用于代码，Gemini 用于多模态任务，Kimi 用于长上下文中文内容）
+- 跨不同提供商测试提示
+- 需要使用与当前 Claude 实例不同的模型
 
-## Core Functionality
+## 核心功能
 
-The skill provides access to multiple LLM models through a single Python script located at `scripts/model_gateway.py`.
+该技能通过位于 `scripts/model_gateway.py` 的单个 Python 脚本提供对多个 LLM 模型的访问。
 
-### Supported Providers and Models
+### 支持的提供商和模型
 
 **OpenAI:**
-- gpt-4o (latest GPT-4 Omni)
-- gpt-4o-mini (smaller, faster GPT-4)
+- gpt-4o (最新的 GPT-4 Omni)
+- gpt-4o-mini (更小、更快的 GPT-4)
 - gpt-4-turbo
 - gpt-3.5-turbo
-- Any other OpenAI chat completion model
+- 任何其他 OpenAI 聊天补全模型
 
 **Anthropic:**
-- claude-3-5-sonnet-20241022 (latest Claude 3.5 Sonnet)
-- claude-3-5-haiku-20241022 (latest Claude 3.5 Haiku)
+- claude-3-5-sonnet-20241022 (最新的 Claude 3.5 Sonnet)
+- claude-3-5-haiku-20241022 (最新的 Claude 3.5 Haiku)
 - claude-3-opus-20240229 (Claude 3 Opus)
-- Any other Anthropic messages API model
+- 任何其他 Anthropic messages API 模型
 
 **Google:**
 - gemini-1.5-pro (Gemini 1.5 Pro)
 - gemini-1.5-flash (Gemini 1.5 Flash)
 - gemini-pro (Gemini Pro)
-- Any other Google Generative AI model
+- 任何其他 Google Generative AI 模型
 
 **Kimi (Moonshot AI / 月之暗面):**
-- moonshot-v1-8k (8K context length)
-- moonshot-v1-32k (32K context length)
-- moonshot-v1-128k (128K context length)
-- kimi-k2 (Trillion-parameter MoE model, 128K context)
-- Any other Moonshot API model
+- moonshot-v1-8k (8K 上下文长度)
+- moonshot-v1-32k (32K 上下文长度)
+- moonshot-v1-128k (128K 上下文长度)
+- kimi-k2 (万亿参数 MoE 模型，128K 上下文)
+- 任何其他 Moonshot API 模型
 
-## Environment Setup
+## 环境设置
 
-### Required API Keys
+### 所需的 API 密钥
 
-The script requires appropriate API keys to be set as environment variables. At least one of the following must be configured:
+脚本需要将适当的 API 密钥设置为环境变量。必须至少配置以下其中一项：
 
-- `OPENAI_API_KEY` - For OpenAI models
-- `ANTHROPIC_API_KEY` - For Anthropic Claude models
-- `GOOGLE_API_KEY` - For Google Gemini models
-- `KIMI_API_KEY` - For Kimi (Moonshot) models
+- `OPENAI_API_KEY` - 用于 OpenAI 模型
+- `ANTHROPIC_API_KEY` - 用于 Anthropic Claude 模型
+- `GOOGLE_API_KEY` - 用于 Google Gemini 模型
+- `KIMI_API_KEY` - 用于 Kimi（月之暗面）模型
 
-**Note:** Only the API key for the provider being used needs to be set. If an API key is missing when calling that provider, the script will return a clear error message.
+**注意：** 只需设置正在使用的提供商的 API 密钥。如果在调用该提供商时缺少 API 密钥，脚本将返回清晰的错误消息。
 
-**Getting Kimi API Key:**
-1. Visit the Moonshot AI platform: https://platform.moonshot.cn/console/account
-2. Sign in with WeChat or other methods
-3. Create an API Key in the console
-4. New users receive ¥10 credit and 500,000 tokens for free
+**获取 Kimi API 密钥：**
+1. 访问月之暗面平台：https://platform.moonshot.cn/console/account
+2. 使用微信或其他方式登录
+3. 在控制台中创建 API Key
+4. 新用户免费获得 ¥10 积分和 500,000 个 tokens
 
-### Installing Dependencies
+### 安装依赖
 
-Before first use, install the required Python packages:
+首次使用前，请安装所需的 Python 包：
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Or install individually as needed:
+或根据需要单独安装：
 
 ```bash
 pip install openai anthropic google-generativeai requests
 ```
 
-## Usage Instructions
+## 使用说明
 
-### Basic Usage Pattern
+### 基本使用模式
 
-To call an LLM model, execute the `model_gateway.py` script with the following required parameters:
+要调用 LLM 模型，请使用以下必需参数执行 `model_gateway.py` 脚本：
 
 ```bash
 python scripts/model_gateway.py \
@@ -103,19 +103,19 @@ python scripts/model_gateway.py \
   --prompt "[YOUR_PROMPT]"
 ```
 
-**Required Parameters:**
-- `--provider`: Choose from "openai", "anthropic", "google", or "kimi"
-- `--model`: Specify the exact model name (e.g., "gpt-4o", "claude-3-5-sonnet-20241022", "gemini-1.5-pro", "moonshot-v1-8k")
-- `--prompt`: The prompt text to send to the model
+**必需参数：**
+- `--provider`: 从 "openai"、"anthropic"、"google" 或 "kimi" 中选择
+- `--model`: 指定确切的模型名称（例如，"gpt-4o"、"claude-3-5-sonnet-20241022"、"gemini-1.5-pro"、"moonshot-v1-8k"）
+- `--prompt`: 要发送给模型的提示文本
 
-**Optional Parameters:**
-- `--temperature`: Controls response randomness (default: 0.7, range: 0.0-2.0)
+**可选参数：**
+- `--temperature`: 控制响应随机性（默认值：0.7，范围：0.0-2.0）
 
-### Response Format
+### 响应格式
 
-The script outputs a JSON response to stdout with the following structure:
+脚本将 JSON 响应输出到 stdout，具有以下结构：
 
-**Successful Response:**
+**成功响应：**
 ```json
 {
   "success": true,
@@ -130,7 +130,7 @@ The script outputs a JSON response to stdout with the following structure:
 }
 ```
 
-**Error Response:**
+**错误响应：**
 ```json
 {
   "success": false,
@@ -138,9 +138,9 @@ The script outputs a JSON response to stdout with the following structure:
 }
 ```
 
-### Practical Examples
+### 实际示例
 
-**Example 1: Calling GPT-4 Omni**
+**示例 1：调用 GPT-4 Omni**
 ```bash
 python scripts/model_gateway.py \
   --provider "openai" \
@@ -148,7 +148,7 @@ python scripts/model_gateway.py \
   --prompt "Explain quantum computing in simple terms"
 ```
 
-**Example 2: Calling Claude 3.5 Sonnet**
+**示例 2：调用 Claude 3.5 Sonnet**
 ```bash
 python scripts/model_gateway.py \
   --provider "anthropic" \
@@ -156,7 +156,7 @@ python scripts/model_gateway.py \
   --prompt "Write a Python function to calculate Fibonacci numbers"
 ```
 
-**Example 3: Calling Gemini with Custom Temperature**
+**示例 3：使用自定义 Temperature 调用 Gemini**
 ```bash
 python scripts/model_gateway.py \
   --provider "google" \
@@ -165,7 +165,7 @@ python scripts/model_gateway.py \
   --temperature 1.2
 ```
 
-**Example 4: Calling Kimi (Moonshot)**
+**示例 4：调用 Kimi（月之暗面）**
 ```bash
 python scripts/model_gateway.py \
   --provider "kimi" \
@@ -173,7 +173,7 @@ python scripts/model_gateway.py \
   --prompt "请用中文解释量子计算的基本原理"
 ```
 
-**Example 5: Calling Kimi with Long Context**
+**示例 5：使用长上下文调用 Kimi**
 ```bash
 python scripts/model_gateway.py \
   --provider "kimi" \
@@ -182,85 +182,85 @@ python scripts/model_gateway.py \
   --temperature 0.3
 ```
 
-**Example 6: Comparing Outputs (Sequential Calls)**
+**示例 6：比较输出（顺序调用）**
 ```bash
-# Call GPT-4
+# 调用 GPT-4
 python scripts/model_gateway.py \
   --provider "openai" \
   --model "gpt-4o" \
   --prompt "What is the capital of France?"
 
-# Call Claude
+# 调用 Claude
 python scripts/model_gateway.py \
   --provider "anthropic" \
   --model "claude-3-5-sonnet-20241022" \
   --prompt "What is the capital of France?"
 ```
 
-## Workflow Integration
+## 工作流集成
 
-### Typical Usage Flow
+### 典型使用流程
 
-1. **Identify the need** - Determine which LLM provider and model best suits the task
-2. **Check environment** - Verify the required API key is configured
-3. **Execute the script** - Run `model_gateway.py` with appropriate parameters
-4. **Parse the response** - Extract the JSON output and use the `response` field
-5. **Handle errors** - Check the `success` field and display errors if needed
+1. **确定需求** - 确定哪个 LLM 提供商和模型最适合任务
+2. **检查环境** - 验证所需的 API 密钥是否已配置
+3. **执行脚本** - 使用适当的参数运行 `model_gateway.py`
+4. **解析响应** - 提取 JSON 输出并使用 `response` 字段
+5. **处理错误** - 检查 `success` 字段并在需要时显示错误
 
-### Parsing Responses in Bash
+### 在 Bash 中解析响应
 
-When using this skill from Claude Code, capture and parse the JSON response:
+在 Claude Code 中使用此技能时，捕获并解析 JSON 响应：
 
 ```bash
-# Store the response
+# 存储响应
 response=$(python scripts/model_gateway.py \
   --provider "openai" \
   --model "gpt-4o" \
   --prompt "Hello, world!")
 
-# Extract just the response text using Python
+# 仅使用 Python 提取响应文本
 echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['response'])"
 ```
 
-## Error Handling
+## 错误处理
 
-The script provides clear error messages for common issues:
+脚本为常见问题提供清晰的错误消息：
 
-- **Missing API Key**: "OPENAI_API_KEY environment variable not set"
-- **Missing Library**: "openai library not installed. Run: pip install openai"
-- **API Error**: "OpenAI API error: [detailed error message]"
-- **Invalid Provider**: "Unknown provider: [provider_name]"
+- **缺少 API 密钥**: "OPENAI_API_KEY environment variable not set"
+- **缺少库**: "openai library not installed. Run: pip install openai"
+- **API 错误**: "OpenAI API error: [detailed error message]"
+- **无效提供商**: "Unknown provider: [provider_name]"
 
-The script exits with code 0 on success and code 1 on failure, making it easy to check execution status in shell scripts.
+脚本在成功时以代码 0 退出，在失败时以代码 1 退出，便于在 shell 脚本中检查执行状态。
 
-## Best Practices
+## 最佳实践
 
-**Model Selection Guidelines:**
-- Use GPT-4o for general tasks requiring high quality and reasoning
-- Use Claude 3.5 Sonnet for coding, analysis, and long-context tasks
-- Use Gemini 1.5 Pro for multimodal tasks or when cost efficiency is important
-- Use Kimi (Moonshot) for Chinese language tasks, long-context processing (up to 128K), and cost-effective alternatives
-- Use smaller models (gpt-4o-mini, claude-3-5-haiku, gemini-1.5-flash, moonshot-v1-8k) for simpler tasks
+**模型选择指南：**
+- 使用 GPT-4o 进行需要高质量和推理的通用任务
+- 使用 Claude 3.5 Sonnet 进行编码、分析和长上下文任务
+- 使用 Gemini 1.5 Pro 进行多模态任务或需要成本效益时
+- 使用 Kimi（月之暗面）进行中文语言任务、长上下文处理（最多 128K）和成本效益高的替代方案
+- 使用较小的模型（gpt-4o-mini、claude-3-5-haiku、gemini-1.5-flash、moonshot-v1-8k）进行更简单的任务
 
-**Kimi-Specific Recommendations:**
-- Use `moonshot-v1-8k` for general Chinese language tasks
-- Use `moonshot-v1-32k` or `moonshot-v1-128k` for long documents and context-heavy tasks
-- Use `kimi-k2` for the most advanced trillion-parameter model capabilities
-- Kimi models excel at Chinese language understanding and generation
+**Kimi 特定建议：**
+- 使用 `moonshot-v1-8k` 进行通用中文语言任务
+- 使用 `moonshot-v1-32k` 或 `moonshot-v1-128k` 进行长文档和上下文密集型任务
+- 使用 `kimi-k2` 获得最先进的万亿参数模型能力
+- Kimi 模型在中文语言理解和生成方面表现卓越
 
-**Temperature Settings:**
-- Use 0.0-0.3 for deterministic, factual responses
-- Use 0.7 (default) for balanced creativity and consistency
-- Use 1.0-2.0 for creative, diverse outputs
+**Temperature 设置：**
+- 使用 0.0-0.3 获得确定性、事实性响应
+- 使用 0.7（默认）获得平衡的创造力和一致性
+- 使用 1.0-2.0 获得创造性、多样化的输出
 
-**Token Management:**
-- Monitor the `usage` field in responses to track token consumption
-- Be aware that different providers have different pricing models
-- Consider using streaming for very long responses (not currently supported in this version)
+**Token 管理：**
+- 监控响应中的 `usage` 字段以跟踪 token 消耗
+- 请注意，不同的提供商有不同的定价模型
+- 考虑对非常长的响应使用流式传输（此版本当前不支持）
 
-## Limitations
+## 限制
 
-- The script does not support streaming responses
-- Image inputs and multimodal capabilities are not currently implemented
-- No built-in rate limiting or retry logic
-- Maximum token limits are provider-specific and not enforced by the script
+- 脚本不支持流式响应
+- 目前未实现图像输入和多模态能力
+- 没有内置的速率限制或重试逻辑
+- 最大 token 限制是特定于提供商的，脚本不会强制执行
