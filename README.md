@@ -1,57 +1,60 @@
 # Universal LLM Skill
 
-一个为 Claude Code 设计的技能，通过单一、一致的 Python 接口提供对多个 LLM 提供商（OpenAI、Anthropic、Google Gemini 和 Kimi/月之暗面）的统一访问。
+一个为 Claude Code 设计的 Kimi (月之暗面) 客户端技能，通过简洁的 Python 接口访问 Kimi 的所有模型系列。
 
 ## 🌟 特性
 
-- **多提供商支持**：通过统一接口调用 OpenAI GPT、Anthropic Claude、Google Gemini 和 Kimi（月之暗面）模型
-- **一致的 API**：所有提供商使用相同的命令结构
+- **支持所有 Kimi 模型**：moonshot-v1-8k、moonshot-v1-32k、moonshot-v1-128k、kimi-k2
+- **配置文件管理**：支持 .env 配置文件，API 密钥管理更安全
+- **灵活调用**：可通过环境变量、配置文件或命令行参数设置
 - **JSON 响应格式**：标准化输出，便于解析
-- **Token 使用追踪**：监控所有提供商的 token 消耗
-- **完善的错误处理**：清晰的错误消息和状态码
+- **Token 使用追踪**：监控每次调用的 token 消耗
+- **完善的错误处理**：清晰的中文错误消息和状态码
 - **中文语言优化**：Kimi 模型在中文任务上表现卓越
 
-## 🚀 支持的提供商和模型
-
-### OpenAI
-- gpt-4o (GPT-4 Omni)
-- gpt-4o-mini
-- gpt-4-turbo
-- gpt-3.5-turbo
-
-### Anthropic
-- claude-3-5-sonnet-20241022
-- claude-3-5-haiku-20241022
-- claude-3-opus-20240229
-
-### Google Gemini
-- gemini-1.5-pro
-- gemini-1.5-flash
-- gemini-pro
+## 🚀 支持的模型
 
 ### Kimi (Moonshot AI / 月之暗面)
-- moonshot-v1-8k (8K 上下文)
-- moonshot-v1-32k (32K 上下文)
-- moonshot-v1-128k (128K 上下文)
-- kimi-k2 (万亿参数 MoE 模型)
+- **moonshot-v1-8k** (8K 上下文) - 适合通用任务
+- **moonshot-v1-32k** (32K 上下文) - 适合中等长度文档
+- **moonshot-v1-128k** (128K 上下文) - 适合长文档分析
+- **kimi-k2** (万亿参数 MoE 模型) - 最强性能
 
 ## 📦 安装
 
-1. **安装依赖**
+### 1. 安装依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. **配置 API 密钥**
+### 2. 配置 API 密钥
 
-为你想使用的提供商设置环境变量：
+**方式 A：使用配置文件（推荐）**
+
+复制示例配置文件：
+```bash
+cp config/.env.example config/.env
+```
+
+编辑 `config/.env` 并填入你的 API 密钥：
+```bash
+KIMI_API_KEY=your-kimi-api-key-here
+DEFAULT_MODEL=moonshot-v1-8k
+DEFAULT_TEMPERATURE=0.7
+MAX_TOKENS=4096
+```
+
+**方式 B：使用环境变量**
 
 ```bash
-export OPENAI_API_KEY='your-openai-key'
-export ANTHROPIC_API_KEY='your-anthropic-key'
-export GOOGLE_API_KEY='your-google-key'
-export KIMI_API_KEY='your-kimi-key'
+export KIMI_API_KEY='your-kimi-api-key-here'
+```
+
+**方式 C：命令行参数**
+
+```bash
+python scripts/kimi_client.py --api-key "your-key" --prompt "你好"
 ```
 
 ## 💡 使用方法
@@ -59,60 +62,56 @@ export KIMI_API_KEY='your-kimi-key'
 ### 基本用法
 
 ```bash
-python scripts/model_gateway.py \
-  --provider "[PROVIDER]" \
-  --model "[MODEL_NAME]" \
-  --prompt "[YOUR_PROMPT]"
+# 使用默认配置
+python scripts/kimi_client.py --prompt "你好，请介绍一下自己"
+
+# 指定模型
+python scripts/kimi_client.py --model moonshot-v1-128k --prompt "分析这篇长文档..."
+
+# 自定义参数
+python scripts/kimi_client.py \
+  --model kimi-k2 \
+  --prompt "复杂推理任务" \
+  --temperature 0.3 \
+  --max-tokens 2000
 ```
 
-**参数说明:**
-- `--provider`: 选择 `openai`、`anthropic`、`google` 或 `kimi`
-- `--model`: 具体的模型名称
-- `--prompt`: 你的提示词文本
-- `--temperature`: (可选) 控制随机性，默认 0.7
+### 参数说明
+
+- `--prompt` (必需): 发送给模型的提示词
+- `--model` (可选): 模型名称，默认从配置文件读取或使用 moonshot-v1-8k
+- `--temperature` (可选): 控制随机性 (0.0-2.0)，默认 0.7
+- `--max-tokens` (可选): 最大生成 token 数，默认 4096
+- `--api-key` (可选): API 密钥，优先级高于配置文件
 
 ### 使用示例
 
-**OpenAI GPT-4:**
+**示例 1：基本对话**
 ```bash
-python scripts/model_gateway.py \
-  --provider "openai" \
-  --model "gpt-4o" \
-  --prompt "Explain quantum computing"
+python scripts/kimi_client.py --prompt "你好，请介绍一下自己"
 ```
 
-**Claude 3.5 Sonnet:**
+**示例 2：长文档分析**
 ```bash
-python scripts/model_gateway.py \
-  --provider "anthropic" \
-  --model "claude-3-5-sonnet-20241022" \
-  --prompt "Write a Python sorting algorithm"
-```
-
-**Google Gemini:**
-```bash
-python scripts/model_gateway.py \
-  --provider "google" \
-  --model "gemini-1.5-pro" \
-  --prompt "Generate creative story ideas" \
-  --temperature 1.2
-```
-
-**Kimi (中文):**
-```bash
-python scripts/model_gateway.py \
-  --provider "kimi" \
-  --model "moonshot-v1-8k" \
-  --prompt "请用中文解释量子计算的基本原理"
-```
-
-**Kimi 长上下文:**
-```bash
-python scripts/model_gateway.py \
-  --provider "kimi" \
-  --model "moonshot-v1-128k" \
-  --prompt "分析这篇长文档..." \
+python scripts/kimi_client.py \
+  --model moonshot-v1-128k \
+  --prompt "分析这篇长文档的主要观点和论证结构..." \
   --temperature 0.3
+```
+
+**示例 3：使用最强模型**
+```bash
+python scripts/kimi_client.py \
+  --model kimi-k2 \
+  --prompt "请解释量子纠缠的本质，并给出数学推导"
+```
+
+**示例 4：创意写作**
+```bash
+python scripts/kimi_client.py \
+  --model moonshot-v1-8k \
+  --prompt "写一首关于春天的现代诗" \
+  --temperature 1.2
 ```
 
 ## 📄 响应格式
@@ -121,9 +120,9 @@ python scripts/model_gateway.py \
 ```json
 {
   "success": true,
-  "provider": "openai",
-  "model": "gpt-4o",
-  "response": "The model's text response...",
+  "provider": "kimi",
+  "model": "moonshot-v1-8k",
+  "response": "模型的文本响应...",
   "usage": {
     "prompt_tokens": 50,
     "completion_tokens": 100,
@@ -136,63 +135,75 @@ python scripts/model_gateway.py \
 ```json
 {
   "success": false,
-  "error": "Detailed error message"
+  "error": "详细的错误消息"
 }
 ```
 
 ## 🎯 使用场景
 
-- **模型对比**：在不同提供商之间测试相同的提示词
-- **多提供商应用**：构建利用每个任务最佳模型的应用
-- **成本优化**：根据预算和需求在模型之间切换
-- **中文内容**：使用 Kimi 获得卓越的中文语言理解能力
-- **长上下文任务**：利用 Kimi 的 128K 上下文窗口进行文档分析
+- **中文内容处理**：Kimi 在中文理解和生成上表现卓越
+- **长文档分析**：利用 128K 上下文窗口处理整本书、长论文
+- **代码理解**：分析大型代码库，提供重构建议
+- **学术研究**：处理学术论文，生成文献综述
+- **创意写作**：小说、剧本、诗歌创作
+- **专业翻译**：中英文档翻译，保持专业术语准确性
 
 ## 🔑 获取 API 密钥
-
-### OpenAI
-访问: https://platform.openai.com/api-keys
-
-### Anthropic
-访问: https://console.anthropic.com/
-
-### Google Gemini
-访问: https://makersuite.google.com/app/apikey
 
 ### Kimi (月之暗面)
 1. 访问: https://platform.moonshot.cn/console/account
 2. 使用微信扫码登录
-3. 创建 API Key
-4. 新用户获赠 ¥10 + 50万 tokens！
+3. 在控制台中创建 API Key
+4. 新用户获赠 **¥10 + 50万 tokens**！
 
 ## 📚 最佳实践
 
-**模型选择:**
-- GPT-4o: 通用任务，高质量推理
-- Claude 3.5 Sonnet: 编程、分析、长上下文
-- Gemini 1.5 Pro: 多模态任务，成本效益
-- Kimi: 中文语言，超长上下文 (128K)
+### 模型选择指南
 
-**Temperature 设置:**
-- 0.0-0.3: 事实性、确定性
-- 0.7: 平衡（默认）
-- 1.0-2.0: 创造性、多样性
+| 模型 | 上下文 | 适用场景 | 特点 |
+|------|--------|---------|------|
+| moonshot-v1-8k | 8K | 通用对话、简短任务 | 快速、成本低 |
+| moonshot-v1-32k | 32K | 中等文档分析 | 平衡性能与成本 |
+| moonshot-v1-128k | 128K | 长文档、整本书 | 超长上下文 |
+| kimi-k2 | 128K | 复杂推理、专业任务 | 最强性能 |
+
+### Temperature 设置建议
+
+- **0.0-0.3**: 事实性、确定性任务（翻译、总结、分析）
+- **0.7**: 平衡创造力和一致性（默认值，通用对话）
+- **1.0-2.0**: 创造性任务（写作、头脑风暴、创意生成）
+
+### Token 管理
+
+- 响应中包含 `usage` 字段，可追踪每次调用的 token 消耗
+- 不同模型定价不同，请查看官方定价页面
+- 建议为长文档任务预留足够的 `max_tokens`
 
 ## 🛠️ 开发
 
 ### 文件结构
 ```
 universal-llm-skill/
-├── SKILL.md                 # Claude skill 文档
-├── requirements.txt         # Python 依赖
+├── config/
+│   ├── .env.example       # API 配置示例
+│   └── .env              # 实际配置（不提交到 Git）
 ├── scripts/
-│   └── model_gateway.py    # 主网关脚本
-└── README.md               # 本文件
+│   └── kimi_client.py    # Kimi 客户端脚本
+├── .gitignore
+├── README.md             # 本文件
+├── SKILL.md              # Claude Skill 文档
+└── requirements.txt      # Python 依赖
 ```
 
 ### 贡献
 
 欢迎贡献！请随时提交 issue 或 pull request。
+
+建议贡献方向：
+- 添加更多使用示例
+- 改进错误处理
+- 添加更多配置选项
+- 性能优化
 
 ## 📝 许可证
 
@@ -201,14 +212,15 @@ MIT License - 欢迎在你的项目中使用此技能！
 ## 🙏 致谢
 
 - 为 [Claude Code](https://claude.com/claude-code) 构建
-- 由 OpenAI、Anthropic、Google 和 Moonshot AI APIs 驱动
+- 由 [Moonshot AI（月之暗面）](https://www.moonshot.cn/) 提供 API 支持
 
 ## 📮 支持
 
 如果遇到任何问题或有疑问：
-1. 查看 [SKILL.md](SKILL.md) 文档
+1. 查看 [SKILL.md](SKILL.md) 文档获取详细使用说明
 2. 在 GitHub 上提交 issue
 3. 查看错误消息 - 它们旨在提供帮助！
+4. 访问 [Kimi 官方文档](https://platform.moonshot.cn/docs)
 
 ---
 

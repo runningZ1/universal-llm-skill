@@ -37,6 +37,7 @@ ENV/
 # API Keys (NEVER commit these!)
 .env
 .env.local
+config/.env
 *.key
 secrets/
 
